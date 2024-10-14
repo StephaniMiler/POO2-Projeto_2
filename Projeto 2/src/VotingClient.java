@@ -6,7 +6,6 @@ public class VotingClient {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    // O método não precisa lançar ClassNotFoundException, só IOException
     public void startConnection(String ip, int port) throws IOException {
         clientSocket = new Socket(ip, port);
 
@@ -19,7 +18,6 @@ public class VotingClient {
             String message = (String) in.readObject();
             System.out.println("Server: " + message);
         } catch (ClassNotFoundException e) {
-            // Trata a ClassNotFoundException dentro do bloco, caso seja necessária
             e.printStackTrace();
         }
     }

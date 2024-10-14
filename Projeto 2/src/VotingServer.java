@@ -19,7 +19,6 @@ public class VotingServer {
             ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
 
-            // Enviar e receber dados (exemplo: enviar uma mensagem de boas-vindas)
             out.writeObject("Welcome to the voting system!");
 
             // Fechar conexão após comunicação
@@ -29,7 +28,7 @@ public class VotingServer {
 
     public static void main(String[] args) {
         try {
-            VotingServer server = new VotingServer(12345); // Porta arbitrária (mude se necessário)
+            VotingServer server = new VotingServer(12345); // Porta arbitrária (mudar se necessário, coloquei localhost)
             server.start();
         } catch (IOException e) {
             e.printStackTrace();
