@@ -26,7 +26,7 @@ public class ServerGUI extends JFrame {
 
         initComponents();
 
-        new Thread(this::startServer).start();  // Inicia o servidor em uma thread separada
+        new Thread(this::startServer).start();
     }
 
     private void initComponents() {
@@ -95,8 +95,8 @@ public class ServerGUI extends JFrame {
 
             while (true) {
                 try {
-                    Socket socket = serverSocket.accept();  // Aceita a conexão do cliente
-                    new ClientHandler(socket).start();  // Cria e inicia uma nova thread para cada cliente
+                    Socket socket = serverSocket.accept();
+                    new ClientHandler(socket).start();
                 } catch (IOException e) {
                     candidatesArea.append("Error accepting client connection: " + e.getMessage() + "\n");
                 }
@@ -127,15 +127,13 @@ public class ServerGUI extends JFrame {
                 String request;
                 while ((request = input.readLine()) != null) {
                     if (request.startsWith("CONFIRM")) {
-                        // Lida com a requisição de confirmação de voto
                         int candidateNumber = Integer.parseInt(request.split(" ")[1]);
                         if (candidates.containsKey(candidateNumber)) {
-                            output.println(candidates.get(candidateNumber));  // Envia o nome do candidato
+                            output.println(candidates.get(candidateNumber));
                         } else {
                             output.println("Candidate not found!");
                         }
                     } else if (request.startsWith("VOTE")) {
-                        // Lida com a requisição para registrar o voto
                         int candidateNumber = Integer.parseInt(request.split(" ")[1]);
                         if (candidates.containsKey(candidateNumber)) {
                             votes.put(candidateNumber, votes.get(candidateNumber) + 1);
