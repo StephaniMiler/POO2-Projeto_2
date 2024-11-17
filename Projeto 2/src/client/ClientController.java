@@ -8,13 +8,7 @@ import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import comms.Candidate;
-import comms.LoginRequest;
-import comms.LoginResponse;
-import comms.RegisterRequest;
-import comms.RegisterResponse;
-import comms.VoteRequest;
-import comms.VoteResponse;
+import comms.*;
 
 public class ClientController {
 
@@ -29,7 +23,6 @@ public class ClientController {
         clientGUI = gui;
     }
 
-    // Conectar ao servidor
     public void connectToServer(String host, int port) {
        
             try {
@@ -37,10 +30,8 @@ public class ClientController {
             	outputStream = new ObjectOutputStream(socket.getOutputStream());
                 inputStream = new ObjectInputStream(socket.getInputStream());
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     }
@@ -49,12 +40,10 @@ public class ClientController {
     	try {
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
 
-    // Login no sistema
     public boolean login(String cpf, String senha) {
         try {
         	outputStream.writeObject("LOGIN");
@@ -78,7 +67,6 @@ public class ClientController {
 		return false;
     }
 
-    // Registrar um novo usuário
     public void register(String cpf, String nome, String senha) {
         try {
         	
@@ -101,7 +89,6 @@ public class ClientController {
         }
     }
 
-    // Enviar voto para o servidor
     public void submitVote(int vote) {
         try {
         	
@@ -144,16 +131,13 @@ public class ClientController {
 				
 				return candidate;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
     		return null;
     };
 
-    // Cancelar voto
     public void cancelVote() {
         clientGUI.enableLoginInterface();
     }

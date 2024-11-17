@@ -105,7 +105,6 @@ public class ClientHandler implements Runnable {
 			candidate = (Candidate) in.readObject();
 	        out.writeObject(serverController.getCandidate(candidate.getNumber()));
 		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

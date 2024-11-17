@@ -8,7 +8,7 @@ public class ClientMain {
         clientGUI.setController(controller);
         clientGUI.setVisible(true);
 
-        controller.connectToServer("127.0.0.1", 12345); // Conectar ao servidor
+        controller.connectToServer("127.0.0.1", 12345);
     }
 }
 
