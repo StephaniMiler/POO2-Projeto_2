@@ -69,7 +69,12 @@ public class ServerGUI extends JFrame {
                         if(serverController.addCandidate(new Candidate(name, number))) {
                             logAction("Added candidate: " + name + " (" + number + ")");
                         } else {
-                        	logAction("Voting already started");
+                        	if(serverController.getVotingOpen()) {
+                        		logAction("Voting already started");
+                        	}
+                        	else {
+                        		logAction("Candidate already registered!");
+                        	}
                         }
                     	
                     } catch (NumberFormatException excep) {
@@ -108,7 +113,7 @@ public class ServerGUI extends JFrame {
                 	logAction(serverController.getResults());
                 }
                 else {
-                	logAction("End voteng first!");
+                	logAction("End voting first!");
                 }
             }
         });

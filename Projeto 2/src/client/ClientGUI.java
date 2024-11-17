@@ -85,6 +85,7 @@ public class ClientGUI extends JFrame {
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 enableRegisterInterface();
+                enableLoginInterface();
             }
         });
 
@@ -92,12 +93,16 @@ public class ClientGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int voto = Integer.parseInt(votoField.getText());
                 Controller.submitVote(voto);
+                votePanel.setVisible(false);
+                enableLoginInterface();
             }
         });
 
         cancelVoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Controller.cancelVote();
+                votePanel.setVisible(false);
+                enableLoginInterface();
             }
         });
     }
@@ -109,6 +114,7 @@ public class ClientGUI extends JFrame {
     public void enableLoginInterface() {
         cpfField.setText("");
         senhaField.setText("");
+        statusLabel.setText("");
         setVisible(true);
     }
 
@@ -135,5 +141,7 @@ public class ClientGUI extends JFrame {
     
     public void disableVoteInterface() {
     	votoField.setVisible(false);
+    	submitVoteButton.setVisible(false);
+    	cancelVoteButton.setVisible(false);
     }
 }

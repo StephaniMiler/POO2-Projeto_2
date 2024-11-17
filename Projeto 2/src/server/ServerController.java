@@ -60,6 +60,12 @@ public class ServerController {
             voteCount.put(candidateNumber, voteCount.getOrDefault(candidateNumber, 0) + 1);
         }
         
+        for(Candidate candidate : candidates) {
+        	if(!voteCount.containsKey(candidate.getNumber())) {
+        		voteCount.put(candidate.getNumber(), 0);
+        	}
+        }
+        
         ArrayList<String> nameVotes = new ArrayList<String>();
         for(Map.Entry<String, String> entry : userNameVoters.entrySet()) {
         	String cpf = entry.getKey();
@@ -76,20 +82,23 @@ public class ServerController {
         for (Map.Entry<Integer, Integer> entry : voteCount.entrySet()) {
             result.append("Candidate ").append(entry.getKey()).append(" - Votes: ").append(entry.getValue()).append("\n");
         }
-        
+        result.append("Voters:\n");
         for(String vote : nameVotes) {
         	result.append(vote).append("\n");
         }
         
-        result.append("\nIf the candidate does not appear, he may have had 0 vote or was not registered!");
-
         return result.toString();
     }
 
     public synchronized boolean addCandidate(Candidate candidate) {
     	if(!votingOpen) {
-            candidates.add(candidate);
-            return true;
+    		for(Candidate confirmed : candidates) {
+    			if(confirmed.getNumber() == candidate.getNumber()) {
+    				return false;
+    			}
+    		}
+    		candidates.add(candidate);
+    		return true;
     	}
     	else {
     		return false;

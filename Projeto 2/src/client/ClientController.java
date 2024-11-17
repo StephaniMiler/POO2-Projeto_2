@@ -139,7 +139,9 @@ public class ClientController {
     };
 
     public void cancelVote() {
+    	login = null;
         clientGUI.enableLoginInterface();
+        // clientGUI.disableVoteInterface();
     }
 }
 	
