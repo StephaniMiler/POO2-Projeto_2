@@ -117,7 +117,7 @@ public class ClientController {
         	}
         	
         	Candidate candidate = getCandidate(vote);
-        	if(JOptionPane.showConfirmDialog(null, "Vote for: " + candidate.getName()) != JOptionPane.OK_OPTION) {
+        	if(JOptionPane.showConfirmDialog(null, "Voto para: " + candidate.getName()) != JOptionPane.OK_OPTION) {
         		JOptionPane.showMessageDialog(null, "Insira o candidato que quer votar novamente!");
         		return;
         	}
@@ -159,5 +159,41 @@ public class ClientController {
     public void cancelVote() {
     	login = null;
     }
+    
+        public static boolean isCPFValid(String cpf) {
+            cpf = cpf.replaceAll("\\D", "");
+
+            if (cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) {
+                return false;
+            }
+
+            try {
+                int sum = 0;
+                int weight = 10;
+
+                for (int i = 0; i < 9; i++) {
+                    sum += Character.getNumericValue(cpf.charAt(i)) * weight--;
+                }
+
+                int firstDigit = 11 - (sum % 11);
+                firstDigit = (firstDigit > 9) ? 0 : firstDigit;
+
+                sum = 0;
+                weight = 11;
+                for (int i = 0; i < 10; i++) {
+                    sum += Character.getNumericValue(cpf.charAt(i)) * weight--;
+                }
+
+                int secondDigit = 11 - (sum % 11);
+                secondDigit = (secondDigit > 9) ? 0 : secondDigit;
+
+                return cpf.charAt(9) == Character.forDigit(firstDigit, 10) &&
+                       cpf.charAt(10) == Character.forDigit(secondDigit, 10);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+    
+
 }
 	

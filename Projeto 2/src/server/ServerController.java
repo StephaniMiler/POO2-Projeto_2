@@ -80,9 +80,9 @@ public class ServerController {
         
         StringBuilder result = new StringBuilder();
         for (Map.Entry<Integer, Integer> entry : voteCount.entrySet()) {
-            result.append("Candidate ").append(entry.getKey()).append(" - Votes: ").append(entry.getValue()).append("\n");
+            result.append("Candidato ").append(entry.getKey()).append(" - Votos: ").append(entry.getValue()).append("\n");
         }
-        result.append("Voters:\n");
+        result.append("Votantes:\n");
         for(String vote : nameVotes) {
         	result.append(vote).append("\n");
         }

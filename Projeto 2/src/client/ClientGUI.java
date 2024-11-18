@@ -35,7 +35,7 @@ public class ClientGUI extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if(JOptionPane.showConfirmDialog(null, "Are you sure ?") == JOptionPane.OK_OPTION){
+                if(JOptionPane.showConfirmDialog(null, "Deseja sair ?") == JOptionPane.OK_OPTION){
                 	Controller.endConnection();
                     setVisible(false);
                     dispose();
@@ -89,12 +89,24 @@ public class ClientGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String cpf = cpfField.getText();
                 String senha = new String(passwordField.getPassword());
-                if(Controller.login(cpf, senha)) {
-                	votePanel.setVisible(true);
-                	enableVoteInterface("Vote no candidato da sua escolha.");
+
+                if (!ClientController.isCPFValid(cpf)) {
+                    JOptionPane.showMessageDialog(null, "CPF inválido! Por favor, insira um CPF válido.");
+                    return;
+                }
+
+                if (Controller.login(cpf, senha)) {
+                    votoField.setText(""); 
+                    votePanel.setVisible(true); 
+                    loginButton.setEnabled(false); 
+                    registerButton.setEnabled(false); 
+                    statusLabel.setText("Logado! Vote no candidato da sua escolha.");
+                } else {
+                    statusLabel.setText("Falha no login. Verifique suas credenciais.");
                 }
             }
         });
+
 
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -105,10 +117,16 @@ public class ClientGUI extends JFrame {
 
         submitVoteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int voto = Integer.parseInt(votoField.getText());
-                Controller.submitVote(voto);
-                votePanel.setVisible(false);
-                enableLoginInterface();
+                try {
+                    int voto = Integer.parseInt(votoField.getText());
+                    Controller.submitVote(voto);
+                    votePanel.setVisible(false); 
+                    loginButton.setEnabled(true); 
+                    registerButton.setEnabled(true);
+                    statusLabel.setText("Voto registrado! Você pode sair ou logar novamente.");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Número do candidato inválido! Insira apenas números.");
+                }
             }
         });
 
@@ -116,7 +134,9 @@ public class ClientGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Controller.cancelVote();
                 votePanel.setVisible(false);
-                enableLoginInterface();
+                loginButton.setEnabled(true); 
+                registerButton.setEnabled(true);
+                statusLabel.setText("Voto cancelado. Faça login novamente para votar.");
             }
         });
     }
@@ -134,31 +154,38 @@ public class ClientGUI extends JFrame {
 
     public void enableVoteInterface(String message) {
         statusLabel.setText("Você está logado. " + message);
+        votoField.setText(""); 
         votoField.setVisible(true);
     }
 
     public void enableRegisterInterface() {
         String cpf = JOptionPane.showInputDialog(this, "Digite seu CPF");
-        if(cpf == null) {
-        	return;
+        if (cpf == null || !ClientController.isCPFValid(cpf)) {
+            JOptionPane.showMessageDialog(null, "CPF inválido! Por favor, insira um CPF válido.");
+            return;
         }
+
         String name = JOptionPane.showInputDialog(this, "Digite seu nome completo");
-        if(name == null) {
-        	return;
+        if (name == null || name.isBlank()) {
+            JOptionPane.showMessageDialog(null, "Nome inválido! Por favor, insira um nome válido.");
+            return;
         }
+
         JPasswordField newPassword = new JPasswordField();
         int confirmation = JOptionPane.showConfirmDialog(this, newPassword, "Digite sua senha", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if(confirmation == JOptionPane.OK_OPTION) {
-        	String password = new String(newPassword.getPassword());
-        	if(password == "" || name == "" || cpf == "") {
-            	JOptionPane.showMessageDialog(null, "Preencha corretamente todos os campos!");
-            	return;
-        	}
+
+        if (confirmation == JOptionPane.OK_OPTION) {
+            String password = new String(newPassword.getPassword());
+            if (password.isBlank()) {
+                JOptionPane.showMessageDialog(null, "Senha inválida! Por favor, insira uma senha válida.");
+                return;
+            }
             Controller.register(cpf, name, password);
         } else {
-        	JOptionPane.showMessageDialog(null, "Cancelado!");
+            JOptionPane.showMessageDialog(null, "Cadastro cancelado!");
         }
     }
+
     
     public void waitingConnection() {
     	cpfField.setVisible(false);
