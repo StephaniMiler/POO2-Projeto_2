@@ -68,33 +68,33 @@ public class ClientHandler implements Runnable {
     private void handleLogin() throws IOException, ClassNotFoundException {
         LoginRequest loginRequest = (LoginRequest) in.readObject();
         if(serverController.login(loginRequest.getCpf(), loginRequest.getSenha())) {
-        	out.writeObject(new LoginResponse(true, "Logged in sucessfully!"));
+        	out.writeObject(new LoginResponse(true, "Login com sucesso!"));
         }
         else {
-        	out.writeObject(new LoginResponse(false, "Login not sucessful: not registered or cpf or password not found"));
+        	out.writeObject(new LoginResponse(false, "Login sem sucesso: CPF ou senha sem cadastro ou erradas"));
         }
     }
 
     private void handleRegister() throws IOException, ClassNotFoundException {
         RegisterRequest registerRequest = (RegisterRequest) in.readObject();
         if(serverController.registerVoter(registerRequest.getCpf(), registerRequest.getSenha(), registerRequest.getNome())) {
-        	out.writeObject(new RegisterResponse(true, "Succesful registration"));
+        	out.writeObject(new RegisterResponse(true, "Cadastro realizado com sucesso"));
         }
         else {
-        	out.writeObject(new RegisterResponse(false, "Failed to register"));
+        	out.writeObject(new RegisterResponse(false, "CPF já cadastrado"));
         }
     }
 
     private void handleVote() throws IOException, ClassNotFoundException {
         VoteRequest voteRequest = (VoteRequest) in.readObject();
         if(serverController.vote(voteRequest.getCpf(), voteRequest.getVote())) {
-        	out.writeObject(new VoteResponse(true, "Voted sucessfully!"));
+        	out.writeObject(new VoteResponse(true, "Voto computado com sucesso!"));
         }
         else {
         	if(serverController.getVotingOpen()) {
-        		out.writeObject(new VoteResponse(false, "CPF already voted!"));
+        		out.writeObject(new VoteResponse(false, "CPF já votou!"));
         	} else {
-        		out.writeObject(new VoteResponse(false, "Voting ended!"));
+        		out.writeObject(new VoteResponse(false, "Votação encerrada!"));
         	}
         }
     }

@@ -28,7 +28,7 @@ public class ServerGUI extends JFrame {
     }
 
     private void setupGUI() {
-        setTitle("Server");
+        setTitle("Servidor de votação");
         setSize(500, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -36,20 +36,20 @@ public class ServerGUI extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(6, 2));
 
-        panel.add(new JLabel("Candidate Name:"));
+        panel.add(new JLabel("Nome do candidato:"));
         candidateNameField = new JTextField();
         panel.add(candidateNameField);
 
-        panel.add(new JLabel("Candidate Number:"));
+        panel.add(new JLabel("Número do candidato:"));
         candidateNumberField = new JTextField();
         panel.add(candidateNumberField);
 
-        addButton = new JButton("Add Candidate");
+        addButton = new JButton("Adicionar candidato");
         panel.add(addButton);
 
-        startVoteButton = new JButton("Start Voting");
-        endVoteButton = new JButton("End Voting");
-        generateReportButton = new JButton("Generate Report");
+        startVoteButton = new JButton("Começar votação");
+        endVoteButton = new JButton("Encerrar votação");
+        generateReportButton = new JButton("Gerar relatório");
 
         panel.add(startVoteButton);
         panel.add(endVoteButton);
@@ -67,18 +67,18 @@ public class ServerGUI extends JFrame {
                     	String name = candidateNameField.getText();
                         int number = Integer.parseInt(candidateNumberField.getText());
                         if(serverController.addCandidate(new Candidate(name, number))) {
-                            logAction("Added candidate: " + name + " (" + number + ")");
+                            logAction("Candidato adicionado: " + name + " (" + number + ")");
                         } else {
                         	if(serverController.getVotingOpen()) {
-                        		logAction("Voting already started");
+                        		logAction("Votação já começou");
                         	}
                         	else {
-                        		logAction("Candidate already registered!");
+                        		logAction("Candidato já cadastrado!");
                         	}
                         }
                     	
                     } catch (NumberFormatException excep) {
-                    	logAction("Invalid input, try again.");
+                    	logAction("Entrada inválida, tente novamente!");
                     };
                 }
         });
@@ -87,9 +87,9 @@ public class ServerGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!serverController.startVoting()) {
-                	logAction("Voting has already started!");
+                	logAction("Votação já começou!");
                 } else {
-                	logAction("Voting Started!");
+                	logAction("Votação iniciada!");
                 }
             }
         });
@@ -98,10 +98,10 @@ public class ServerGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!serverController.stopVoting()) {;
-                	logAction("Voting not started or already ended!");
+                	logAction("Votação não iniciada ou já terminada!");
                 }
                 else {
-                	logAction("Voting ended!");
+                	logAction("Votação encerrada!");
                 }
             }
         });
@@ -113,7 +113,7 @@ public class ServerGUI extends JFrame {
                 	logAction(serverController.getResults());
                 }
                 else {
-                	logAction("End voting first!");
+                	logAction("Encerre a votação primeiro!");
                 }
             }
         });

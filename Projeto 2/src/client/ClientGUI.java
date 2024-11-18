@@ -1,14 +1,27 @@
 package client;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 public class ClientGUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
 	private JTextField cpfField;
-    private JPasswordField senhaField;
+    private JPasswordField passwordField;
     private JTextField votoField;
     private JButton loginButton, registerButton, submitVoteButton, cancelVoteButton;
     private JLabel statusLabel;
@@ -47,8 +60,8 @@ public class ClientGUI extends JFrame {
         loginPanel.add(cpfField);
 
         loginPanel.add(new JLabel("Senha:"));
-        senhaField = new JPasswordField();
-        loginPanel.add(senhaField);
+        passwordField = new JPasswordField();
+        loginPanel.add(passwordField);
 
         loginButton = new JButton("Login");
         registerButton = new JButton("Registrar");
@@ -75,9 +88,10 @@ public class ClientGUI extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String cpf = cpfField.getText();
-                String senha = new String(senhaField.getPassword());
+                String senha = new String(passwordField.getPassword());
                 if(Controller.login(cpf, senha)) {
                 	votePanel.setVisible(true);
+                	enableVoteInterface("Vote no candidato da sua escolha.");
                 }
             }
         });
@@ -113,7 +127,7 @@ public class ClientGUI extends JFrame {
     
     public void enableLoginInterface() {
         cpfField.setText("");
-        senhaField.setText("");
+        passwordField.setText("");
         statusLabel.setText("");
         setVisible(true);
     }
@@ -128,20 +142,37 @@ public class ClientGUI extends JFrame {
         if(cpf == null) {
         	return;
         }
-        String nome = JOptionPane.showInputDialog(this, "Digite seu nome completo");
-        if(nome == null) {
+        String name = JOptionPane.showInputDialog(this, "Digite seu nome completo");
+        if(name == null) {
         	return;
         }
-        String senha = JOptionPane.showInputDialog(this, "Digite sua senha");
-        if(senha == null) {
-        	return;
+        JPasswordField newPassword = new JPasswordField();
+        int confirmation = JOptionPane.showConfirmDialog(this, newPassword, "Digite sua senha", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if(confirmation == JOptionPane.OK_OPTION) {
+        	String password = new String(newPassword.getPassword());
+        	if(password == "" || name == "" || cpf == "") {
+            	JOptionPane.showMessageDialog(null, "Preencha corretamente todos os campos!");
+            	return;
+        	}
+            Controller.register(cpf, name, password);
+        } else {
+        	JOptionPane.showMessageDialog(null, "Cancelado!");
         }
-        Controller.register(cpf, nome, senha);
     }
     
-    public void disableVoteInterface() {
-    	votoField.setVisible(false);
-    	submitVoteButton.setVisible(false);
-    	cancelVoteButton.setVisible(false);
+    public void waitingConnection() {
+    	cpfField.setVisible(false);
+    	passwordField.setVisible(false);
+    	loginButton.setVisible(false);
+    	registerButton.setVisible(false);
+    	statusLabel.setText("Esperando conexão com servidor, aguarde!");
+    }
+    
+    public void connected() {
+    	cpfField.setVisible(true);
+    	passwordField.setVisible(true);
+    	loginButton.setVisible(true);
+    	registerButton.setVisible(true);
+    	statusLabel.setText("Conectado! Bem-vindo ao sistema de votação!");
     }
 }

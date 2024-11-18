@@ -3,12 +3,19 @@ package client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import comms.*;
+import comms.Candidate;
+import comms.LoginRequest;
+import comms.LoginResponse;
+import comms.RegisterRequest;
+import comms.RegisterResponse;
+import comms.VoteRequest;
+import comms.VoteResponse;
 
 public class ClientController {
 
@@ -24,21 +31,33 @@ public class ClientController {
     }
 
     public void connectToServer(String host, int port) {
-       
-            try {
-            	socket = new Socket(host, port);
-            	outputStream = new ObjectOutputStream(socket.getOutputStream());
-                inputStream = new ObjectInputStream(socket.getInputStream());
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    		boolean connected = false;
+            while(!connected) {
+            	try {
+                	socket = new Socket(host, port);
+                	outputStream = new ObjectOutputStream(socket.getOutputStream());
+                    inputStream = new ObjectInputStream(socket.getInputStream());
+                    
+                    connected = true;
+                    clientGUI.connected();
+    			} catch(ConnectException connectionError){
+    				clientGUI.waitingConnection();
+    			}
+                catch (UnknownHostException e) {
+    				e.printStackTrace();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+            }
     }
     
     public void endConnection() {
     	try {
-			socket.close();
+    		if(socket != null) {
+    			if(socket.isClosed() == false) {
+    				socket.close();
+    			}
+    		}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -67,13 +86,13 @@ public class ClientController {
 		return false;
     }
 
-    public void register(String cpf, String nome, String senha) {
+    public void register(String cpf, String name, String password) {
         try {
         	
         	outputStream.writeObject("REGISTER");
 
         	
-            RegisterRequest registerRequest = new RegisterRequest(cpf, nome, senha);
+            RegisterRequest registerRequest = new RegisterRequest(cpf, name, password);
             outputStream.writeObject(registerRequest);
 
             RegisterResponse response = (RegisterResponse) inputStream.readObject();
@@ -112,7 +131,6 @@ public class ClientController {
 
             if (response.isSuccessful()) {
                 JOptionPane.showMessageDialog(null, "Voto registrado com sucesso!");
-                clientGUI.disableVoteInterface();
                 clientGUI.enableLoginInterface();
             } else {
                 JOptionPane.showMessageDialog(null, "Erro ao registrar voto: " + response.getMessage());
@@ -140,8 +158,6 @@ public class ClientController {
 
     public void cancelVote() {
     	login = null;
-        clientGUI.enableLoginInterface();
-        // clientGUI.disableVoteInterface();
     }
 }
 	
